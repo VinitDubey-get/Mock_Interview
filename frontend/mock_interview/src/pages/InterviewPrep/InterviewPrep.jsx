@@ -304,6 +304,7 @@ const InterviewPrep = () => {
 
       </div>
       
+      <MockInterviewButton sessionId={sessionId}></MockInterviewButton>
    
     </DashboardLayout>
   )

@@ -76,4 +76,140 @@ const generateConceptExplanation=async(req,res)=>{
 
 };
 
-module.exports={generateInterviewQuestions,generateConceptExplanation};
+
+const startConversationalInterview = async(req, res) => {
+  try {
+    const { role, experience, topicsToFocus } = req.body;
+    
+    if (!role || !experience || !topicsToFocus) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const prompt = conversationalPrompt(role, experience, topicsToFocus, 'start');
+    
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-exp",
+      contents: prompt,
+    });
+
+    let rawText = response.text;
+    const cleanedText = rawText
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "")
+      .trim();
+    
+    const data = JSON.parse(cleanedText);
+    
+    res.status(200).json(data);
+    
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to start conversation",
+      error: error.message
+    });
+  }
+};
+
+// @desc Continue conversational interview
+// @route POST/api/ai/continue-conversation
+// @access private
+const continueConversationalInterview = async(req, res) => {
+  try {
+    const { 
+      role, 
+      experience, 
+      topicsToFocus, 
+      conversationHistory, 
+      userResponse 
+    } = req.body;
+    
+    if (!role || !experience || !topicsToFocus || !userResponse) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const prompt = conversationalPrompt(
+      role, 
+      experience, 
+      topicsToFocus, 
+      'continue',
+      conversationHistory,
+      userResponse
+    );
+    
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-exp",
+      contents: prompt,
+    });
+
+    let rawText = response.text;
+    const cleanedText = rawText
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "")
+      .trim();
+    
+    const data = JSON.parse(cleanedText);
+    
+    res.status(200).json(data);
+    
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to continue conversation",
+      error: error.message
+    });
+  }
+};
+
+// @desc End conversational interview and get feedback
+// @route POST/api/ai/end-conversation
+// @access private
+const endConversationalInterview = async(req, res) => {
+  try {
+    const { 
+      role, 
+      experience, 
+      topicsToFocus, 
+      conversationHistory 
+    } = req.body;
+    
+    if (!role || !experience || !topicsToFocus || !conversationHistory) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const prompt = conversationalPrompt(
+      role, 
+      experience, 
+      topicsToFocus, 
+      'end',
+      conversationHistory
+    );
+    
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash-exp",
+      contents: prompt,
+    });
+
+    let rawText = response.text;
+    const cleanedText = rawText
+      .replace(/^```json\s*/, "")
+      .replace(/```$/, "")
+      .trim();
+    
+    const data = JSON.parse(cleanedText);
+    
+    res.status(200).json(data);
+    
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to end conversation",
+      error: error.message
+    });
+  }
+};
+
+module.exports = {
+  generateInterviewQuestions,
+  generateConceptExplanation,
+  startConversationalInterview,
+  continueConversationalInterview,
+  endConversationalInterview
+};

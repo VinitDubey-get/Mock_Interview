@@ -26,4 +26,4 @@ const SpinnerLoader = () => {
   )
 }
 
-export default SpinnerLoader
+export default SpinnerLoader;

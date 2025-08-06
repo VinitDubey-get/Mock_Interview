@@ -1,6 +1,9 @@
+// frontend/src/components/Cards/SummaryCard.jsx - Updated with conversation button
+
 import React from 'react'
-import { LuTrash2 } from 'react-icons/lu';
+import { LuTrash2, LuMessageCircle, LuFileText } from 'react-icons/lu';
 import { getInitials } from '../../utils/helper';
+
 const SummaryCard = ({colors,
               role,
               topicsToFocus,
@@ -9,10 +12,11 @@ const SummaryCard = ({colors,
               description,
               lastUpdated,
               onSelect,
-              onDelete})=>{
+              onDelete,
+              onStartConversation}) => {
   return (
-    <div className='group w-full h-full bg-white border border-gray-300/40 rounded-xl p-4 overflow-hidden cursor-pointer shadow-sm hover:shadow-md hover:shadow-gray-300 relative' onClick={onSelect}>
-      <div className="rounded-lg p-4 cursor-pointer relative" style={{background:colors.bgcolor,}}>
+    <div className='group w-full h-full bg-white border border-gray-300/40 rounded-xl p-4 overflow-hidden cursor-pointer shadow-sm hover:shadow-md hover:shadow-gray-300 relative'>
+      <div className="rounded-lg p-4 cursor-pointer relative" style={{background:colors.bgcolor,}} onClick={onSelect}>
         <div className="flex items-start">
           <div className="flex-shrink-0 w-12 h-12 bg-white rounded-md flex items-center justify-center mr-4">
             <span className='text-lg font-semibold text-black'>
@@ -22,7 +26,7 @@ const SummaryCard = ({colors,
           {/* content container */}
           <div className="flex-grow">
             <div className="flex justify-between items-start">
-              {/*Titale and skils */}
+              {/*Title and skills */}
               <div >
                  <h2 className='text-[17px] font-medium'>
                     {role}
@@ -34,9 +38,44 @@ const SummaryCard = ({colors,
             </div>
           </div>
         </div>
-        <button className='hidden group-hover:flex items-center gap-2 text-xs text-rose-500 font-medium bg-rose-100 px-3 py-1 rounded text-nowrap border-rose-100 hover:border-rose-800 cursor-pointer absolute top-0 right-0' onClick={(e)=>{e.stopPropagation(); onDelete()}}>
-            <LuTrash2/>
-        </button>
+        
+        {/* Action Buttons */}
+        <div className='hidden group-hover:flex items-center gap-2 absolute top-2 right-2'>
+          <button 
+            className='flex items-center gap-1 text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded border border-blue-100 hover:border-blue-200 cursor-pointer'
+            onClick={(e) => {
+              e.stopPropagation(); 
+              onStartConversation();
+            }}
+            title="Start Conversational Interview"
+          >
+            <LuMessageCircle size={12} />
+            <span className="hidden sm:inline">Talk</span>
+          </button>
+          
+          <button 
+            className='flex items-center gap-1 text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded border border-green-100 hover:border-green-200 cursor-pointer'
+            onClick={(e) => {
+              e.stopPropagation(); 
+              onSelect();
+            }}
+            title="View Q&A Session"
+          >
+            <LuFileText size={12} />
+            <span className="hidden sm:inline">Q&A</span>
+          </button>
+          
+          <button 
+            className='flex items-center gap-1 text-xs text-rose-500 font-medium bg-rose-100 px-2 py-1 rounded border border-rose-100 hover:border-rose-200 cursor-pointer' 
+            onClick={(e) => {
+              e.stopPropagation(); 
+              onDelete();
+            }}
+            title="Delete Session"
+          >
+            <LuTrash2 size={12} />
+          </button>
+        </div>
       </div>
       
 
